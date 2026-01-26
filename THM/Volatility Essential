@@ -1,0 +1,57 @@
+Volatility Essentials
+https://tryhackme.com/room/volatilityessentials
+En esta habitación de tryhackme se me dió acceso a una máquina virtual linux para usar volatility en ella, en un ejercicio práctico
+Aquí pondré los apuntes de dicha habitación 
+# Intro
+Volatility es una herramienta open source de análisis forense. Actualmente siendo la versión Volatility 3. Por decirlo de manera sencilla, volatility es capaz de leer la memoria ram de un dispositivo 
+Para usar volatility se necesita llevar a cabo una adquisición de memoria:
+- En windows se pueden usar:
+  - DumpIt: Hace una imagen de todo el OS y hashea la salida(Importante para la integridad de los datos)
+  - WinPmem:Una herramienta open source que adquiere la ram en formato raw
+  - Magnet RAM Capture:Recopilador controlado por GUI que toma instantáneas de la memoria volátil en hosts Windows activos y minimiza el espacio ocupado
+  - FTK Imager: La herramienta más común. Adquiere la memoria y artefactos seleccionados junto con funciones de captura de discos
+- En linux
+  - AVML: Un programa windows que comprime la memoria en un archivo ELF sin requerir un módulo kernel
+  - LiME:Un módulo kernel cargable para linux que captura toda memoria volátil del disco/red 
+Extraer la memoria de entornos virtuales se puede lograr pasando el archivo de memoria virtual del host.
+- VMware: .vmem
+- Hyper-V: .bin
+- Parallels: .mem
+- VirtualBox: .sav(Archivo de memoria parcial)
+La ruta del archivo puede ser:
+	- .raw
+	- .dd
+	- .img
+	- .dmp
+	- hiberfil.sys
+	- .vbox
+	- .E01, .E02, …
+	- .lime
+# Plugins
+Volatility usa diferentes plugins para solicitar datos para continuar el análisis:
+- windows.info
+- linux.info
+- windows.pslist: Enumera procesos activos de la lista “doblemente linkeada”  que almacena información de procesos en la memoria(Como el administrador de tareas). La salida/respuesta de esta entrada serán todos los procesos en ejecución y terminados y sus horas 
+- windows.pstree: Lista todos los procesos en base a su PID(Parent ID), usando los mismos metoos que pslist
+- windows.psscan: Tecnica de listado que detecta procesos encontrando estructuras de datos que concuerdan con _EPROCESS. Aunque puede dar falsos positivos a veces
+- windows.handles: Se usa para examinar detalles e identificadores de archivos y threads de un usuario/host
+- windows.netstat: Intenta identificar todas las estructuras de memoria que tengan una conexión a la red
+- windows.netscan: Se pueden adquirir tomas de red de la memoria. Recuperará conexiones abiertas y cerradas de TCP/UDP, IDs de procesos relacionados, puertos locales y remotos e IPs
+- windows.dlllist: Lista toda las DLLs asociadas con procesos al momento de la extracción
+- windows.ssdt: Se usa para detectar cambios en el SSDT ya que el kernel de windows lo usa para “resolver” las direcciones de las llamadas al sistema, algo que los rootkits de adversarios usan para redirigir las llamadas legítimas a las contrapartes maliciosas 
+- windows.modules: Lista drivers y módulos kernel de windows que se hayan cargado en la memoria(Incluyendo ruta de acceso, tamaño, y otros datos de cada archivo relacionado). Aunque puede pasar por encima de aquellos que están ocultos o sin ruta de acceso
+- windows.driverscan: A diferencia de windows.modules, el cual se puede saltar drivers/módulos ocultos, .driverscan escanea la memoria raw buscando estructuras driver que podrían haberse desvinculado de las listas originales
+
+Por ejemplo, en un comando de linux:
+python3 vol.py -f “ruta del archivo” windows.pstree
+	
+Diferentes amenazas pueden ejecutarse solamente en la memoria sin modificar el disco duro.
+
+# Análisis de malware
+Uno de los plugin más útiles para la sección de análisis de malware es malfind, el cual, intenta detectar procesos “inyectados” y sus ids de proceso(PID) ,sus respectivas direcciones,... 
+Funciona de tal manera que escanea e identifica procesos que tienen el ejecutable  como RWE o RX , y/o sin archivo en la memoria en el disco(Malware sin archivos)
+Basándose en lo que encuentre malfind, el área infectada cambiará. Un encabezado MZ  indica un archivo ejecutable de Windows. El área infectada podría estar orientada al shellcode, que requeriría más análisis 
+Otro plugin útil es vadinfo, el cual muestra información detallada sobre descripciones de memoria virtual, útil cuando se está investigando manualmente áreas de memoria por ejemplo
+# Análisis forense de memoria avanzado
+Los que se dedican al análisis forense en dispositivos electrónicos deben de poseer diferentes métodos para poder detectar manipulaciones llevadas a cabo en los sistemas operativos. Los que quieren ocultar archivos, procesos,drivers,... modifican el kernel por medio de rootkits. Dichos adversarios que ocultan archivos normalmente usan hooking(Una técnica que permite al malware lograr persistencia en el sistema en el que está, o evasión de sistemas anti malware). Aunque la técnica no siempre es maliciosa ya que la usan procesos legítimos o programas de seguridad útiles, como antivirus o debuggers.
+Una de las estrategias de hooking que se usan son hooks SSDT(Tabla de descriptores de servicios del sistema), usados para modificar las entradas de tablas al kernel del sistema operativo. 
