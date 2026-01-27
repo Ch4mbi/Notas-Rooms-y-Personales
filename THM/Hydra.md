@@ -63,6 +63,7 @@ Acorde con el repositorio de hydra(https://github.com/vanhauser-thc/thc-hydra), 
  - VMware-Auth
  - VNC
  - XMPP
+
 https://en.kali.tools/?p=220
 
 # Comandos básicos
