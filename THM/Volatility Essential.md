@@ -56,5 +56,3 @@ Otro plugin útil es vadinfo, el cual muestra información detallada sobre descr
 # Análisis forense de memoria avanzado
 Los que se dedican al análisis forense en dispositivos electrónicos deben de poseer diferentes métodos para poder detectar manipulaciones llevadas a cabo en los sistemas operativos. Los que quieren ocultar archivos, procesos,drivers,... modifican el kernel por medio de rootkits. Dichos adversarios que ocultan archivos normalmente usan hooking(Una técnica que permite al malware lograr persistencia en el sistema en el que está, o evasión de sistemas anti malware). Aunque la técnica no siempre es maliciosa ya que la usan procesos legítimos o programas de seguridad útiles, como antivirus o debuggers.
 Una de las estrategias de hooking que se usan son hooks SSDT(Tabla de descriptores de servicios del sistema), usados para modificar las entradas de tablas al kernel del sistema operativo. 
-
-<img width="744" height="571" alt="image" src="https://github.com/user-attachments/assets/775980d5-5edc-4f23-ae23-97d6cfda98d7" />
