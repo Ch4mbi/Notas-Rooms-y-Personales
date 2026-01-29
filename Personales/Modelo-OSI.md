@@ -3,12 +3,19 @@
 ## Capas
 
 7.Aplicación
+
 6.Presentación
+
 5.Sesión
+
 4.Transporte
+
 3.Red
+
 2.Data Link
+
 1.Físico
+
 
 ## Ejemplos de ataques por capas
 ### 7.Aplicación
