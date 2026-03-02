@@ -67,19 +67,12 @@ Indica el comienzo de la partición, la dirección en la que comienza y también
 Los últimos 4 bytes de la partición indican el número de sectores en la partición 
 
 | Posición | Longitud | Nombre del campo | 
-|-----------|-----------|-----------|
 | 0 | 1 | Indicador de arranque(Comienzo) |
-|-----------|-----------|-----------|
 | 1-3 | 3 | CHS (Método (antiguo) de localización de discos duros)|
-|-----------|-----------|-----------|
 | 4 | 1 | Tipo de partición |
-|-----------|-----------|-----------|
 | 5-7 | 3 | Fin de CHS |
-|-----------|-----------|-----------|
 | 8-11 | 4 | Dirección del bloque lógico(LBA Address) |
-|-----------|-----------|-----------|
 | 12-15 | 4 | Número de sectores|
-|-----------|-----------|-----------|
 
 ##### Localizar la partición
 
@@ -139,35 +132,20 @@ La firma es la misma que el estandar MBR ,55 AA, que marca el final de protectiv
 El encabezado primario GPT empieza después del fin de protective MBR(55 AA). Todos los bytes en el encabezado GPT tienen propósito. Ocupa 92 bytes de los 512 que tiene. Después de esos 92 bytes, serían todos 00 para hacer relleno para completar el sector en el que están.
 
 | Posicion de los bytes | Longitud de los bytes | Nombre del campo |
-|-----------|-----------|-----------|
 | 0-7 | 8 | Firma |
-|-----------|-----------|-----------|
 | 8-11 | 4 | Revisión |
-|-----------|-----------|-----------|
 | 12-15 | 4 | Tamaño del encabezado|
-|-----------|-----------|-----------|
 | 16-19 | 4 | CRC32 del encabezado |
-|-----------|-----------|-----------|
 | 20-23 | 4 | Dado la vuelta |
-|-----------|-----------|-----------|
 | 24-31 | 8 | LBA actual |
-|-----------|-----------|-----------|
 | 32-39 | 8 | Backup del LBA |
-|-----------|-----------|-----------|
 | 40-47 | 8 | Primer LBA usable  |
-|-----------|-----------|-----------|
 | 48-55 | 8 | Ultimo LBA usable |
-|-----------|-----------|-----------|
 | 56-71 | 16 | GUID del disco |
-|-----------|-----------|-----------|
 | 72-79 | 8 | Array de entrada a la partición LBA |
-|-----------|-----------|-----------|
 | 80-83 | 4 | Numero de entradas a la partición |
-|-----------|-----------|-----------|
 | 84-87 | 4 | Tamaño de cada entrada a la partición |
-|-----------|-----------|-----------|
 | 88-91 | 4 | CRC32 del array de partición |
-|-----------|-----------|-----------|
 
 - Firma
 Reconoce al campo como un encabezado GPT ,estando siempre al principio(45 46 49 20 50 41 52 54)
@@ -200,19 +178,12 @@ Es el checksum de todo el array de entrada a la partición
 
 Los arrays de entrada a la partición almacenan información de cada una de las 128 particiones que tiene gpt. Los bytes de cada partición indican diferentes características:
 | Posicion de los bytes | Tamaño de los bytes | Campo |
-|-----------|-----------|-----------|
 | 0-15 | 16 | Tipo de partición |
-|-----------|-----------|-----------|
 | 16-31 | 16 | GUID único de partición |
-|-----------|-----------|-----------|
 | 32-39 | 8 | Inicio LBA |
-|-----------|-----------|-----------|
 | 40-47 | 8 | Fin LBA |
-|-----------|-----------|-----------|
 | 48-55 | 8 | Atributos |
-|-----------|-----------|-----------|
 | 56-127  | 72 | Nombre de la partición |
-|-----------|-----------|-----------|
 
 - GUID único de la partición
 Se usa para distinguir particiones, siendo único en cada una. Para pasarlo a decimal se le debe aplicar el estándar internacional para pasarlo a GUID
