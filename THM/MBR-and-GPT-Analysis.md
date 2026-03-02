@@ -17,7 +17,6 @@ El proceso de arranque(boot process) enciende todo el sistema siguiendo estos pa
 6. Cargar el sistema operativo para que el usuario pueda interactuar 
 
 ## Analizar MBR
-
 Actualmente, MBR ha sido reemplazado por GPT, pero se sigue usando en diversos OS.
 Para analizar el MBR se pueden usar herramientas como HxD, la cual es un editor hexadecimal. Se debe abrir el archivo MBR para poder analizarlo en la app.  Al abrir mbr, lo abrirá en un formato hexadecimal
 
@@ -66,13 +65,20 @@ Indica el comienzo de la partición, la dirección en la que comienza y también
 6. Número de sectores
 Los últimos 4 bytes de la partición indican el número de sectores en la partición 
 
-| Posición | Longitud | Nombre del campo | 
+| Posición  | Longitud | Nombre del campo | 
+|-----------|-----------|-----------|
 | 0 | 1 | Indicador de arranque(Comienzo) |
+|-----------|-----------|-----------|
 | 1-3 | 3 | CHS (Método (antiguo) de localización de discos duros)|
+|-----------|-----------|-----------|
 | 4 | 1 | Tipo de partición |
+|-----------|-----------|-----------|
 | 5-7 | 3 | Fin de CHS |
+|-----------|-----------|-----------|
 | 8-11 | 4 | Dirección del bloque lógico(LBA Address) |
+|-----------|-----------|-----------|
 | 12-15 | 4 | Número de sectores|
+|-----------|-----------|-----------|
 
 ##### Localizar la partición
 
@@ -91,11 +97,8 @@ Aclaración: La regla consiste no solo en ordenar como tal. La “inversión” 
 Por ejemplo, si se tiene E3 C9 E3 16 0B 5C 4D B8 81 7D F9 2D F0 02 15 AE , se divide asi: E3 C9 E3 16 / 0B 5C / 4D B8 81 7D F9 2D F0 02 15 AE. Los 4 primeros bytes se invierten: 16 E3 C9 E3. Después , se deja 0B 5C igual , al igual que 4D B8 81 7D F9 2D F0 02 15 AE. Después se junta todo.
 En formato GUID, los grupos de bytes van asi: 8-4-4-8
 #### Firma MBR(2 bytes)
-
 Es relativamente pequeño, pero su alteración tiene un gran impacto. En MBR es la ultima sección 55 AA, indican que el MBR ha terminado. Existen malware que pueden alterarlos para corromper todo
-
 ### Malware de MBR
-
 A pesar de que MBR ha sido reemplazado por GPT, se sigue usando en algunos discos. MBR toma lugar para arrancar el OS, siendo esa la razón para que los atacante lo tengan como objetivo ya que si alteran los 512 bytes de alguna manera, pueden comprometer todo el sistema. Algunos de los malware usados son:
 - Bootkits
 Este tipo de malware se integra en el esquema MBR para pasar los mecanismos de protección del mecanismo, logrando así una técnica de persistencia en el sistema. Incluso si se formatea el dispositivo, el malware seguirá ahí
@@ -105,7 +108,6 @@ En lugar de encriptar los archivos “visibles” del sistema, los atacantes usa
 Este malware corrompe el MBR para que sea imposible arrancar el OS ya que cualquier cambio en el esquema da lugar a diversos fallos. 
 
 ## Analizar GPT
-
 Se cambió MBR por GPT por limitaciones que tenía el propio esquema de MBR(MBR solo soporta 2 TB y 4 particiones mientras que GPT soporta 9 ZB y 128 particiones)
 GPT es compatible con sistemas UEFI(Unified Extensible Firmware Interface)
 1. Protective MBR
@@ -113,9 +115,7 @@ GPT es compatible con sistemas UEFI(Unified Extensible Firmware Interface)
 3. Array de entrada de partición
 4. Backup del encabezado primario de GPT
 5. Backup del array de entrada de partición
-
 ### Protective MBR
-
 Los discos con GPT están particionados, y el sistema usa UEFI para administrar dichas particiones, aunque algunos sistemas siguen usando BIOS con GPT. Hay que tener en cuenta que:
 - BIOS esta diseñado para trabajar con MBR
 - UEFI esta diseñado para trabajar con GPT
@@ -132,20 +132,35 @@ La firma es la misma que el estandar MBR ,55 AA, que marca el final de protectiv
 El encabezado primario GPT empieza después del fin de protective MBR(55 AA). Todos los bytes en el encabezado GPT tienen propósito. Ocupa 92 bytes de los 512 que tiene. Después de esos 92 bytes, serían todos 00 para hacer relleno para completar el sector en el que están.
 
 | Posicion de los bytes | Longitud de los bytes | Nombre del campo |
+|-----------|-----------|-----------|
 | 0-7 | 8 | Firma |
+|-----------|-----------|-----------|
 | 8-11 | 4 | Revisión |
+|-----------|-----------|-----------|
 | 12-15 | 4 | Tamaño del encabezado|
+|-----------|-----------|-----------|
 | 16-19 | 4 | CRC32 del encabezado |
+|-----------|-----------|-----------|
 | 20-23 | 4 | Dado la vuelta |
+|-----------|-----------|-----------|
 | 24-31 | 8 | LBA actual |
+|-----------|-----------|-----------|
 | 32-39 | 8 | Backup del LBA |
+|-----------|-----------|-----------|
 | 40-47 | 8 | Primer LBA usable  |
+|-----------|-----------|-----------|
 | 48-55 | 8 | Ultimo LBA usable |
+|-----------|-----------|-----------|
 | 56-71 | 16 | GUID del disco |
+|-----------|-----------|-----------|
 | 72-79 | 8 | Array de entrada a la partición LBA |
+|-----------|-----------|-----------|
 | 80-83 | 4 | Numero de entradas a la partición |
+|-----------|-----------|-----------|
 | 84-87 | 4 | Tamaño de cada entrada a la partición |
+|-----------|-----------|-----------|
 | 88-91 | 4 | CRC32 del array de partición |
+|-----------|-----------|-----------|
 
 - Firma
 Reconoce al campo como un encabezado GPT ,estando siempre al principio(45 46 49 20 50 41 52 54)
@@ -178,12 +193,19 @@ Es el checksum de todo el array de entrada a la partición
 
 Los arrays de entrada a la partición almacenan información de cada una de las 128 particiones que tiene gpt. Los bytes de cada partición indican diferentes características:
 | Posicion de los bytes | Tamaño de los bytes | Campo |
+|-----------|-----------|-----------|
 | 0-15 | 16 | Tipo de partición |
+|-----------|-----------|-----------|
 | 16-31 | 16 | GUID único de partición |
+|-----------|-----------|-----------|
 | 32-39 | 8 | Inicio LBA |
+|-----------|-----------|-----------|
 | 40-47 | 8 | Fin LBA |
+|-----------|-----------|-----------|
 | 48-55 | 8 | Atributos |
+|-----------|-----------|-----------|
 | 56-127  | 72 | Nombre de la partición |
+|-----------|-----------|-----------|
 
 - GUID único de la partición
 Se usa para distinguir particiones, siendo único en cada una. Para pasarlo a decimal se le debe aplicar el estándar internacional para pasarlo a GUID
