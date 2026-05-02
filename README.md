@@ -1,4 +1,4 @@
-# Apuntes — Ch4mbi
+# Apuntes -- Ch4mbi
 
 Notas técnicas personales sobre conceptos de ciberseguridad y writeups de rooms de TryHackMe.  
 El objetivo es consolidar lo aprendido de forma estructurada, con especial atención al área de **DFIR**.
